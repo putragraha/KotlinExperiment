@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">FingerprintMobileApps</string>
+    <string name="label_scan">Scan</string>
+    <string-array name="staff_id">
+        <item>001</item>
+        <item>002</item>
+        <item>003</item>
+        <item>004</item>
+    </string-array>
+    <string-array name="staff_finger_data">
+        <item>fd001</item>
+        <item>fd002</item>
+        <item>fd003</item>
+        <item>fd004</item>
+    </string-array>
+</resources>
