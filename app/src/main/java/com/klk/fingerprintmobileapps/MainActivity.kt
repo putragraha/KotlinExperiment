@@ -81,8 +81,6 @@ class MainActivity : AppCompatActivity() {
                 || (mStaffId.equals("002") && mStaffFingerData.equals("fd002"))
                 || (mStaffId.equals("003") && mStaffFingerData.equals("fd003"))) {
             valid = true
-        } else {
-            valid = false
         }
 
         return valid
