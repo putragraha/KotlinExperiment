@@ -1,9 +1,11 @@
 package com.klk.fingerprintmobileapps
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.sqlite.SQLiteDatabase
 import android.location.Location
 import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
@@ -20,6 +22,11 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.OnSuccessListener
+import com.klk.fingerprintmobileapps.Adapter.CustomSpinnerAdapter
+import com.klk.fingerprintmobileapps.DBHelper.AttendanceHandler
+import com.klk.fingerprintmobileapps.DBHelper.FMSQLiteOpenHelper
+import com.klk.fingerprintmobileapps.DBHelper.StaffHandler
+import com.klk.fingerprintmobileapps.Model.Staff
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,8 +38,10 @@ class MainActivity : AppCompatActivity(),
 
     private val TAG: String? = "MainActivity"
 
-    private val mStaffIdList = arrayOf("001", "002", "003")
-    private val mStaffFingerDataList = arrayOf("fd001", "fd002", "fd003")
+//    private val mStaffIdList = arrayOf("001", "002", "003")
+//    private var mStaffFingerDataList = arrayOf("fd001", "fd002", "fd003")
+    private lateinit var mStaffIdList : Array<String>
+    private lateinit var mStaffFingerDataList: Array<String>
 
     private var mStaffId: String? = null
     private var mStaffFingerData: String? = null
@@ -46,18 +55,27 @@ class MainActivity : AppCompatActivity(),
     lateinit var mLocationManager: LocationManager
     private var mLocationRequest: LocationRequest? = null
     private lateinit var mGoogleApiClient: GoogleApiClient
-    private val listener: LocationListener? = null
     private val UPDATE_INTERVAL = (2 * 1000).toLong()
     private val FASTEST_INTERVAL: Long = 2000
+
+    private lateinit var sqliteOpenHelper: FMSQLiteOpenHelper
+    private lateinit var db: SQLiteDatabase
+    private lateinit var staffDBHandler: StaffHandler
+    private lateinit var attendanceDBHandler: AttendanceHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         init()
+        showAllStaff()
+
     }
 
     private fun init(){
+        setDB()
+        getStaffId()
+        getFinger()
         setSpinner()
         setButton()
         setLocation()
@@ -88,6 +106,13 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    private fun setDB(){
+        sqliteOpenHelper = FMSQLiteOpenHelper(this)
+        db = sqliteOpenHelper.getSQLiteDatabase()
+        staffDBHandler = StaffHandler(db)
+        attendanceDBHandler = AttendanceHandler(db)
+    }
+
     private fun setButton(){
         btnScan.setOnClickListener {
             var valid: Boolean = checkValid()
@@ -100,6 +125,40 @@ class MainActivity : AppCompatActivity(),
                         Toast.LENGTH_LONG).show()
             }
         }
+
+        btnAdd.setOnClickListener{
+            var values = ContentValues()
+            values.put(FMSQLiteOpenHelper.STAFF_ID, 1)
+            values.put(FMSQLiteOpenHelper.STAFF_NAME, "New Staff 1")
+            values.put(FMSQLiteOpenHelper.STAFF_PHOTO, "0293841j24kykfjajdlakjsd")
+            values.put(FMSQLiteOpenHelper.STAFF_FINGER, "123098123jjldajsndahdassadas")
+
+            staffDBHandler.insert(values)
+
+            showAllStaff()
+        }
+    }
+
+    private fun showAllStaff(){
+        val staffList = staffDBHandler.getAll()
+        Log.w(TAG, staffList.toString())
+        var output = "Staff : \n"
+
+        for (staff: Staff in staffList){
+            output += "ID : ${staff.id} | " +
+                    "Name :  ${staff.name} \n"
+        }
+
+        Toast.makeText(this, output, Toast.LENGTH_SHORT).show()
+
+    }
+
+    private fun getStaffId(){
+        mStaffIdList = staffDBHandler.getAllStaffId()
+    }
+
+    private fun getFinger(){
+        mStaffFingerDataList = staffDBHandler.getAllFinger()
     }
 
     private fun setLocation(){

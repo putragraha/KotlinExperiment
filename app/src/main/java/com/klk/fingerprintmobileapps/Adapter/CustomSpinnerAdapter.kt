@@ -1,4 +1,4 @@
-package com.klk.fingerprintmobileapps
+package com.klk.fingerprintmobileapps.Adapter
 
 import android.R
 import android.content.Context
