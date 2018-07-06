@@ -61,7 +61,7 @@ class StaffHandler (val db: SQLiteDatabase){
             do {
                 val staff_finger = queryResult.getString(queryResult.getColumnIndex(FMSQLiteOpenHelper.STAFF_FINGER))
                 var count = 0
-                fingerList[0] = staff_finger
+                fingerList[count] = staff_finger
                 count++
             } while (queryResult.moveToNext())
         }
@@ -83,7 +83,7 @@ class StaffHandler (val db: SQLiteDatabase){
             do {
                 val staff_id = (queryResult.getInt(queryResult.getColumnIndex(FMSQLiteOpenHelper.STAFF_ID))).toString()
                 var count = 0
-                idList[0] = staff_id
+                idList[count] = staff_id
                 count++
             } while (queryResult.moveToNext())
         }

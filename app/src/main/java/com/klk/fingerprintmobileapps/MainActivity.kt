@@ -38,10 +38,10 @@ class MainActivity : AppCompatActivity(),
 
     private val TAG: String? = "MainActivity"
 
-//    private val mStaffIdList = arrayOf("001", "002", "003")
-//    private var mStaffFingerDataList = arrayOf("fd001", "fd002", "fd003")
-    private lateinit var mStaffIdList : Array<String>
-    private lateinit var mStaffFingerDataList: Array<String>
+    private val mStaffIdList = arrayOf("001", "002", "003")
+    private val mStaffFingerDataList = arrayOf("fd001", "fd002", "fd003")
+//    private lateinit var mStaffIdList : Array<String>
+//    private lateinit var mStaffFingerDataList: Array<String>
 
     private var mStaffId: String? = null
     private var mStaffFingerData: String? = null
@@ -74,8 +74,8 @@ class MainActivity : AppCompatActivity(),
 
     private fun init(){
         setDB()
-        getStaffId()
-        getFinger()
+//        mStaffIdList = staffDBHandler.getAllStaffId()
+//        mStaffFingerDataList = staffDBHandler.getAllFinger()
         setSpinner()
         setButton()
         setLocation()
@@ -153,12 +153,29 @@ class MainActivity : AppCompatActivity(),
 
     }
 
-    private fun getStaffId(){
-        mStaffIdList = staffDBHandler.getAllStaffId()
+    private fun checkValid(): Boolean{
+        var valid: Boolean = false
+        if ((mStaffId.equals("001") && mStaffFingerData.equals("fd001"))
+                || (mStaffId.equals("002") && mStaffFingerData.equals("fd002"))
+                || (mStaffId.equals("003") && mStaffFingerData.equals("fd003"))) {
+            valid = true
+        }
+
+        return valid
     }
 
-    private fun getFinger(){
-        mStaffFingerDataList = staffDBHandler.getAllFinger()
+    private fun getResult(){
+        // get current date
+        val date = Date();
+        val formatter = SimpleDateFormat("dd MMM yyyy HH:mm")
+        val answer: String = formatter.format(date)
+
+        Toast.makeText(this,
+                "Staff ID : ${mStaffId} | " +
+                        "Date : ${answer} | " +
+                        "Longitude : ${mLocationLong} | " +
+                        "Latitude : ${mLocationLat}",
+                Toast.LENGTH_LONG).show()
     }
 
     private fun setLocation(){
@@ -196,31 +213,6 @@ class MainActivity : AppCompatActivity(),
                 })
                 .setNegativeButton("Cancel", DialogInterface.OnClickListener { paramDialogInterface, paramInt -> })
         dialog.show()
-    }
-
-    private fun checkValid(): Boolean{
-        var valid: Boolean = false
-        if ((mStaffId.equals("001") && mStaffFingerData.equals("fd001"))
-                || (mStaffId.equals("002") && mStaffFingerData.equals("fd002"))
-                || (mStaffId.equals("003") && mStaffFingerData.equals("fd003"))) {
-            valid = true
-        }
-
-        return valid
-    }
-
-    private fun getResult(){
-        // get current date
-        val date = Date();
-        val formatter = SimpleDateFormat("dd MMM yyyy HH:mm")
-        val answer: String = formatter.format(date)
-
-        Toast.makeText(this,
-                "Staff ID : ${mStaffId} | " +
-                        "Date : ${answer} | " +
-                        "Longitude : ${mLocationLong} | " +
-                        "Latitude : ${mLocationLat}",
-                Toast.LENGTH_LONG).show()
     }
 
     protected fun startLocationUpdates(){
